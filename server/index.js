@@ -66,7 +66,10 @@ const T10 = [
 ];
 
 const sub = (concentration, table) => {
-  if (concentration == null || !Number.isFinite(Number(concentration))) {
+  if (
+    concentration == null ||
+    !Number.isFinite(Number(concentration))
+  ) {
     return null;
   }
 
@@ -74,32 +77,46 @@ const sub = (concentration, table) => {
 
   if (value < 0) return null;
 
-  const range = table.find((item) => value <= item[1]) || table[table.length - 1];
+  const range =
+    table.find((item) => value <= item[1]) ||
+    table[table.length - 1];
 
   const [low, high, indexLow, indexHigh] = range;
 
-  const clamped = Math.max(low, Math.min(value, high));
+  const clamped = Math.max(
+    low,
+    Math.min(value, high)
+  );
 
   return Math.round(
-    ((indexHigh - indexLow) / (high - low)) * (clamped - low) +
+    ((indexHigh - indexLow) / (high - low)) *
+      (clamped - low) +
       indexLow
   );
 };
 
 const mean = (values) => {
   const valid = values.filter(
-    (value) => value != null && Number.isFinite(Number(value))
+    (value) =>
+      value != null &&
+      Number.isFinite(Number(value))
   );
 
   if (!valid.length) return null;
 
-  return valid.reduce((sum, value) => sum + Number(value), 0) / valid.length;
+  return (
+    valid.reduce(
+      (sum, value) => sum + Number(value),
+      0
+    ) / valid.length
+  );
 };
 
 const indAqi = (pm25, pm10) => {
-  const values = [sub(pm25, T25), sub(pm10, T10)].filter(
-    (value) => value != null
-  );
+  const values = [
+    sub(pm25, T25),
+    sub(pm10, T10),
+  ].filter((value) => value != null);
 
   return values.length ? Math.max(...values) : null;
 };
@@ -127,7 +144,9 @@ const fetchJson = async (url, options = {}) => {
   });
 
   if (!response.ok) {
-    throw new Error(`External API returned HTTP ${response.status}`);
+    throw new Error(
+      `External API returned HTTP ${response.status}`
+    );
   }
 
   return response.json();
@@ -145,12 +164,18 @@ function demo(city) {
   const series = [];
 
   for (let i = -72; i <= 24; i++) {
-    const time = new Date(now.getTime() + i * 36e5);
+    const time = new Date(
+      now.getTime() + i * 36e5
+    );
+
     const hour = time.getHours();
 
     const pm25 = Math.round(
       150 +
-        70 * Math.cos(((hour - 7) / 24) * 2 * Math.PI) +
+        70 *
+          Math.cos(
+            ((hour - 7) / 24) * 2 * Math.PI
+          ) +
         (i % 7) * 4
     );
 
@@ -190,7 +215,8 @@ function demo(city) {
     series,
     nowIndex,
 
-    source: 'DEMO MODE - synthetic values, NOT real measurements',
+    source:
+      'DEMO MODE - synthetic values, NOT real measurements',
 
     fetchedAt: new Date().toISOString(),
   };
@@ -240,7 +266,9 @@ app.get('/api/aqi', async (req, res) => {
     const current = air.current;
 
     if (!hourly?.time || !current) {
-      throw new Error('Incomplete air quality response.');
+      throw new Error(
+        'Incomplete air quality response.'
+      );
     }
 
     // Step 3: Find the current hour.
@@ -259,31 +287,36 @@ app.get('/api/aqi', async (req, res) => {
 
     // Step 4: Calculate hourly AQI estimates.
 
-    const series = hourly.time.map((time, index) => {
-      const start = Math.max(0, index - 23);
+    const series = hourly.time.map(
+      (time, index) => {
+        const start = Math.max(0, index - 23);
 
-      const pm25 = mean(
-        hourly.pm2_5.slice(start, index + 1)
-      );
+        const pm25 = mean(
+          hourly.pm2_5.slice(start, index + 1)
+        );
 
-      const pm10 = mean(
-        hourly.pm10.slice(start, index + 1)
-      );
+        const pm10 = mean(
+          hourly.pm10.slice(start, index + 1)
+        );
 
-      return {
-        t: time,
+        return {
+          t: time,
 
-        pm25: pm25 == null ? null : Math.round(pm25),
+          pm25:
+            pm25 == null ? null : Math.round(pm25),
 
-        pm10: pm10 == null ? null : Math.round(pm10),
+          pm10:
+            pm10 == null ? null : Math.round(pm10),
 
-        aqi: indAqi(pm25, pm10),
+          aqi: indAqi(pm25, pm10),
 
-        future: index > nowIndex,
-      };
-    });
+          future: index > nowIndex,
+        };
+      }
+    );
 
-    const estimatedAqi = series[nowIndex]?.aqi ?? null;
+    const estimatedAqi =
+      series[nowIndex]?.aqi ?? null;
 
     // Step 5: Return structured information.
 
@@ -316,11 +349,16 @@ app.get('/api/aqi', async (req, res) => {
 
       fetchedAt: new Date().toISOString(),
     });
+
   } catch (error) {
-    console.error('[AQI API Error]', error.message);
+    console.error(
+      '[AQI API Error]',
+      error.message
+    );
 
     return res.status(502).json({
-      error: 'Live air quality service is unavailable right now.',
+      error:
+        'Live air quality service is unavailable right now.',
       canDemo: true,
     });
   }
@@ -333,10 +371,16 @@ app.get('/api/aqi', async (req, res) => {
 const getPlaceName = (context) => {
   const place = context?.place;
 
-  if (typeof place === 'string') return place;
+  if (typeof place === 'string') {
+    return place;
+  }
 
   if (place && typeof place === 'object') {
-    return [place.name, place.admin, place.country]
+    return [
+      place.name,
+      place.admin,
+      place.country,
+    ]
       .filter(Boolean)
       .join(', ');
   }
@@ -345,7 +389,9 @@ const getPlaceName = (context) => {
 };
 
 const fallback = (message, context) => {
-  const aqi = context?.current?.aqi ?? context?.aqi;
+  const aqi =
+    context?.current?.aqi ?? context?.aqi;
+
   const category =
     context?.current?.category ??
     context?.category ??
@@ -388,7 +434,7 @@ Note: I am currently using basic guidance because the AI service is unavailable.
 };
 
 // ======================================================
-// 8. GEMINI AI ASSISTANT
+// 8. GEMINI AI ASSISTANT WITH AUTOMATIC RETRIES
 // ======================================================
 
 app.post('/api/chat', async (req, res) => {
@@ -399,7 +445,11 @@ app.post('/api/chat', async (req, res) => {
     profile = [],
   } = req.body || {};
 
-  if (!message || typeof message !== 'string' || !message.trim()) {
+  if (
+    !message ||
+    typeof message !== 'string' ||
+    !message.trim()
+  ) {
     return res.status(400).json({
       error: 'Please enter a message.',
     });
@@ -410,12 +460,15 @@ app.post('/api/chat', async (req, res) => {
   const apiKey = process.env.GEMINI_API_KEY?.trim();
 
   const model =
-    process.env.GEMINI_MODEL?.trim() || 'gemini-2.5-flash';
+    process.env.GEMINI_MODEL?.trim() ||
+    'gemini-3.8-flash';
 
   // Check API key.
 
   if (!apiKey) {
-    console.error('[Gemini] GEMINI_API_KEY is missing.');
+    console.error(
+      '[Gemini] GEMINI_API_KEY is missing.'
+    );
 
     return res.json({
       text: fallback(userMessage, context),
@@ -424,7 +477,7 @@ app.post('/api/chat', async (req, res) => {
     });
   }
 
-  // Prepare the system instructions.
+  // Prepare system instructions.
 
   const systemInstruction = `
 You are AeroSage AI, a practical urban air-quality and environmental health advisor for Indian families.
@@ -486,96 +539,176 @@ ${JSON.stringify(profile)}
     ],
   });
 
-  try {
-    console.log(`[Gemini] Sending request using model: ${model}`);
+  // Retry configuration.
 
-    const response = await fetch(
-      `https://generativelanguage.googleapis.com/v1beta/models/${encodeURIComponent(model)}:generateContent`,
-      {
-        method: 'POST',
+  const maxAttempts = 3;
 
-        headers: {
-          'Content-Type': 'application/json',
-          'x-goog-api-key': apiKey,
+  const retryableStatuses = [
+    429,
+    500,
+    502,
+    503,
+    504,
+  ];
+
+  const requestUrl =
+    `https://generativelanguage.googleapis.com/v1beta/models/${encodeURIComponent(model)}:generateContent`;
+
+  const requestBody = {
+    systemInstruction: {
+      parts: [
+        {
+          text: systemInstruction,
         },
+      ],
+    },
 
-        body: JSON.stringify({
-          systemInstruction: {
-            parts: [
-              {
-                text: systemInstruction,
-              },
-            ],
+    contents,
+
+    generationConfig: {
+      temperature: 0.7,
+      maxOutputTokens: 1000,
+    },
+  };
+
+  // Gemini request with automatic retries.
+
+  for (
+    let attempt = 1;
+    attempt <= maxAttempts;
+    attempt++
+  ) {
+    try {
+      console.log(
+        `[Gemini] Sending request using model: ${model} (attempt ${attempt}/${maxAttempts})`
+      );
+
+      const response = await fetch(
+        requestUrl,
+        {
+          method: 'POST',
+
+          headers: {
+            'Content-Type': 'application/json',
+            'x-goog-api-key': apiKey,
           },
 
-          contents,
+          body: JSON.stringify(requestBody),
 
-          generationConfig: {
-            temperature: 0.7,
-            maxOutputTokens: 1000,
-          },
-        }),
+          signal: AbortSignal.timeout(30000),
+        }
+      );
 
-        signal: AbortSignal.timeout(30000),
-      }
-    );
+      const data = await response
+        .json()
+        .catch(() => ({}));
 
-    const data = await response.json().catch(() => ({}));
+      // Handle API errors.
 
-    // Check actual Gemini API errors.
-
-    if (!response.ok) {
-      console.error('[Gemini API Error]', {
-        status: response.status,
-        message:
+      if (!response.ok) {
+        const errorMessage =
           data?.error?.message ||
-          response.statusText,
+          response.statusText;
+
+        console.error('[Gemini API Error]', {
+          status: response.status,
+          message: errorMessage,
+          attempt,
+        });
+
+        // Retry temporary server or rate-limit errors.
+
+        if (
+          retryableStatuses.includes(response.status) &&
+          attempt < maxAttempts
+        ) {
+          const delay = 1000 * attempt;
+
+          console.log(
+            `[Gemini] Temporary error. Retrying in ${delay}ms...`
+          );
+
+          await new Promise((resolve) =>
+            setTimeout(resolve, delay)
+          );
+
+          continue;
+        }
+
+        return res.json({
+          text: fallback(userMessage, context),
+          ai: false,
+          note: `Gemini API returned HTTP ${response.status}. Basic guidance is being shown instead.`,
+        });
+      }
+
+      // Extract generated response.
+
+      const generatedText =
+        data.candidates?.[0]?.content?.parts
+          ?.map((part) => part.text || '')
+          .join('')
+          .trim();
+
+      if (!generatedText) {
+        console.error(
+          '[Gemini] Empty response received.',
+          {
+            finishReason:
+              data.candidates?.[0]?.finishReason,
+            promptFeedback: data.promptFeedback,
+          }
+        );
+
+        return res.json({
+          text: fallback(userMessage, context),
+          ai: false,
+          note: 'Gemini did not return generated text.',
+        });
+      }
+
+      console.log(
+        '[Gemini] AI response generated successfully.'
+      );
+
+      return res.json({
+        text: generatedText,
+        ai: true,
       });
+
+    } catch (error) {
+      console.error(
+        '[Gemini Request Failed]',
+        {
+          name: error.name,
+          message: error.message,
+          attempt,
+        }
+      );
+
+      // Retry connection and timeout failures.
+
+      if (attempt < maxAttempts) {
+        const delay = 1000 * attempt;
+
+        console.log(
+          `[Gemini] Connection failed. Retrying in ${delay}ms...`
+        );
+
+        await new Promise((resolve) =>
+          setTimeout(resolve, delay)
+        );
+
+        continue;
+      }
 
       return res.json({
         text: fallback(userMessage, context),
         ai: false,
-        note: `Gemini API returned HTTP ${response.status}. Check backend logs.`,
+        note:
+          'Gemini is temporarily unavailable. Basic guidance is being shown instead.',
       });
     }
-
-    // Extract generated response.
-
-    const generatedText = data.candidates?.[0]?.content?.parts
-      ?.map((part) => part.text || '')
-      .join('')
-      .trim();
-
-    if (!generatedText) {
-      console.error('[Gemini] Empty response received.', {
-        finishReason: data.candidates?.[0]?.finishReason,
-        promptFeedback: data.promptFeedback,
-      });
-
-      return res.json({
-        text: fallback(userMessage, context),
-        ai: false,
-        note: 'Gemini did not return generated text.',
-      });
-    }
-
-    console.log('[Gemini] AI response generated successfully.');
-
-    return res.json({
-      text: generatedText,
-      ai: true,
-    });
-  } catch (error) {
-    console.error('[Gemini Request Failed]', {
-      name: error.name,
-      message: error.message,
-    });
-
-    return res.json({
-      text: fallback(userMessage, context),
-      ai: false,
-      note: 'Gemini connection failed. Check backend logs.',
-    });
   }
 });
 
@@ -583,8 +716,11 @@ ${JSON.stringify(profile)}
 // 9. SUPABASE FAMILY PROFILE CONFIGURATION
 // ======================================================
 
-const SUPABASE_URL = process.env.SUPABASE_URL?.replace(/\/$/, '');
-const SUPABASE_KEY = process.env.SUPABASE_SERVICE_KEY;
+const SUPABASE_URL =
+  process.env.SUPABASE_URL?.replace(/\/$/, '');
+
+const SUPABASE_KEY =
+  process.env.SUPABASE_SERVICE_KEY;
 
 const UUID = /^[0-9a-f-]{20,40}$/i;
 
@@ -595,24 +731,32 @@ const TYPES = [
   'adult',
 ];
 
-const supabaseRequest = async (endpoint, options = {}) => {
+const supabaseRequest = async (
+  endpoint,
+  options = {}
+) => {
   if (!SUPABASE_URL || !SUPABASE_KEY) {
-    throw new Error('Supabase is not configured.');
+    throw new Error(
+      'Supabase is not configured.'
+    );
   }
 
-  return fetch(`${SUPABASE_URL}/rest/v1/${endpoint}`, {
-    ...options,
+  return fetch(
+    `${SUPABASE_URL}/rest/v1/${endpoint}`,
+    {
+      ...options,
 
-    headers: {
-      apikey: SUPABASE_KEY,
-      Authorization: `Bearer ${SUPABASE_KEY}`,
-      'Content-Type': 'application/json',
-      Prefer: 'return=representation',
-      ...options.headers,
-    },
+      headers: {
+        apikey: SUPABASE_KEY,
+        Authorization: `Bearer ${SUPABASE_KEY}`,
+        'Content-Type': 'application/json',
+        Prefer: 'return=representation',
+        ...options.headers,
+      },
 
-    signal: AbortSignal.timeout(10000),
-  });
+      signal: AbortSignal.timeout(10000),
+    }
+  );
 };
 
 // ======================================================
@@ -641,7 +785,9 @@ app.get('/api/family', async (req, res) => {
     );
 
     if (!response.ok) {
-      throw new Error(`Supabase returned HTTP ${response.status}`);
+      throw new Error(
+        `Supabase returned HTTP ${response.status}`
+      );
     }
 
     const items = await response.json();
@@ -650,8 +796,12 @@ app.get('/api/family', async (req, res) => {
       enabled: true,
       items,
     });
+
   } catch (error) {
-    console.error('[Family GET Error]', error.message);
+    console.error(
+      '[Family GET Error]',
+      error.message
+    );
 
     return res.json({
       enabled: false,
@@ -667,11 +817,16 @@ app.get('/api/family', async (req, res) => {
 app.post('/api/family', async (req, res) => {
   if (!SUPABASE_URL || !SUPABASE_KEY) {
     return res.status(503).json({
-      error: 'Family cloud storage is not configured.',
+      error:
+        'Family cloud storage is not configured.',
     });
   }
 
-  const { device, name, type } = req.body || {};
+  const {
+    device,
+    name,
+    type,
+  } = req.body || {};
 
   if (
     !UUID.test(device || '') ||
@@ -680,30 +835,42 @@ app.post('/api/family', async (req, res) => {
     !name.trim()
   ) {
     return res.status(400).json({
-      error: 'Invalid family profile information.',
+      error:
+        'Invalid family profile information.',
     });
   }
 
   try {
-    const response = await supabaseRequest('profiles', {
-      method: 'POST',
+    const response = await supabaseRequest(
+      'profiles',
+      {
+        method: 'POST',
 
-      body: JSON.stringify({
-        device_id: device,
-        name: name.trim().slice(0, 40),
-        type,
-      }),
-    });
+        body: JSON.stringify({
+          device_id: device,
+          name: name.trim().slice(0, 40),
+          type,
+        }),
+      }
+    );
 
-    const data = await response.json().catch(() => []);
+    const data = await response
+      .json()
+      .catch(() => []);
 
     if (!response.ok) {
-      console.error('[Family POST Error]', {
-        status: response.status,
-        message: data?.message || data?.hint,
-      });
+      console.error(
+        '[Family POST Error]',
+        {
+          status: response.status,
+          message:
+            data?.message || data?.hint,
+        }
+      );
 
-      throw new Error('Could not save family profile.');
+      throw new Error(
+        'Could not save family profile.'
+      );
     }
 
     const item = data[0];
@@ -715,11 +882,16 @@ app.post('/api/family', async (req, res) => {
         type: item.type,
       },
     });
+
   } catch (error) {
-    console.error('[Family POST Failed]', error.message);
+    console.error(
+      '[Family POST Failed]',
+      error.message
+    );
 
     return res.status(502).json({
-      error: 'Unable to save family profile.',
+      error:
+        'Unable to save family profile.',
     });
   }
 });
@@ -728,62 +900,83 @@ app.post('/api/family', async (req, res) => {
 // 12. DELETE FAMILY PROFILE
 // ======================================================
 
-app.delete('/api/family/:id', async (req, res) => {
-  if (!SUPABASE_URL || !SUPABASE_KEY) {
-    return res.status(503).json({
-      error: 'Family cloud storage is not configured.',
-    });
-  }
-
-  const { id } = req.params;
-  const device = req.query.device;
-
-  if (!UUID.test(id || '') || !UUID.test(device || '')) {
-    return res.status(400).json({
-      error: 'Invalid profile or device ID.',
-    });
-  }
-
-  try {
-    const response = await supabaseRequest(
-      `profiles?id=eq.${id}&device_id=eq.${device}`,
-      {
-        method: 'DELETE',
-      }
-    );
-
-    if (!response.ok) {
-      throw new Error(`Supabase returned HTTP ${response.status}`);
+app.delete(
+  '/api/family/:id',
+  async (req, res) => {
+    if (!SUPABASE_URL || !SUPABASE_KEY) {
+      return res.status(503).json({
+        error:
+          'Family cloud storage is not configured.',
+      });
     }
 
-    return res.json({
-      ok: true,
-    });
-  } catch (error) {
-    console.error('[Family DELETE Error]', error.message);
+    const { id } = req.params;
+    const device = req.query.device;
 
-    return res.status(502).json({
-      error: 'Unable to delete family profile.',
-    });
+    if (
+      !UUID.test(id || '') ||
+      !UUID.test(device || '')
+    ) {
+      return res.status(400).json({
+        error:
+          'Invalid profile or device ID.',
+      });
+    }
+
+    try {
+      const response = await supabaseRequest(
+        `profiles?id=eq.${id}&device_id=eq.${device}`,
+        {
+          method: 'DELETE',
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error(
+          `Supabase returned HTTP ${response.status}`
+        );
+      }
+
+      return res.json({
+        ok: true,
+      });
+
+    } catch (error) {
+      console.error(
+        '[Family DELETE Error]',
+        error.message
+      );
+
+      return res.status(502).json({
+        error:
+          'Unable to delete family profile.',
+      });
+    }
   }
-});
+);
 
 // ======================================================
 // 13. FRONTEND STATIC FILE SERVING
 // ======================================================
 
-const currentFile = fileURLToPath(import.meta.url);
+const currentFile =
+  fileURLToPath(import.meta.url);
 
-const currentDirectory = path.dirname(currentFile);
+const currentDirectory =
+  path.dirname(currentFile);
 
-const distDirectory = path.join(currentDirectory, '../dist');
+const distDirectory =
+  path.join(currentDirectory, '../dist');
 
 if (fs.existsSync(distDirectory)) {
   app.use(express.static(distDirectory));
 
   app.get('*', (_, res) => {
-    res.sendFile(path.join(distDirectory, 'index.html'));
+    res.sendFile(
+      path.join(distDirectory, 'index.html')
+    );
   });
+
 } else {
   app.get('/', (_, res) => {
     res.json({
@@ -801,9 +994,22 @@ app.listen(PORT, () => {
   console.log('====================================');
   console.log('       AEROSAGE AI BACKEND');
   console.log('====================================');
-  console.log(`Server running on port ${PORT}`);
-  console.log(`Gemini model: ${process.env.GEMINI_MODEL || 'gemini-2.5-flash'}`);
-  console.log(`Gemini key configured: ${Boolean(process.env.GEMINI_API_KEY)}`);
-  console.log(`Supabase configured: ${Boolean(SUPABASE_URL && SUPABASE_KEY)}`);
+
+  console.log(
+    `Server running on port ${PORT}`
+  );
+
+  console.log(
+    `Gemini model: ${process.env.GEMINI_MODEL || 'gemini-3.8-flash'}`
+  );
+
+  console.log(
+    `Gemini key configured: ${Boolean(process.env.GEMINI_API_KEY)}`
+  );
+
+  console.log(
+    `Supabase configured: ${Boolean(SUPABASE_URL && SUPABASE_KEY)}`
+  );
+
   console.log('====================================');
 });
