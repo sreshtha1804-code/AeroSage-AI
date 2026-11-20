@@ -1,63 +1,108 @@
 # 🌿 AeroSage AI
 ### Predict Pollution. Protect People. Breathe Smarter.
 
-**AeroSage AI** is an AI-powered air quality intelligence and environmental health platform designed to help individuals, families, and communities understand pollution, anticipate air quality risks, and make healthier everyday decisions.
+**AeroSage AI** is a Generative AI-powered Urban Air Quality Assistant designed to help individuals and families understand air pollution, monitor environmental conditions, and make healthier everyday decisions.
 
-Instead of simply displaying AQI values, AeroSage AI transforms environmental data into practical recommendations for outdoor activities, indoor air quality, family safety, and sustainable living.
+Instead of simply displaying AQI values, AeroSage AI transforms environmental information into practical insights through air quality monitoring, pollution trends, activity planning, indoor air quality guidance, and an AI-powered conversational assistant.
+
+<p align="center">
+  **Live Application:** https://aerosageai-six.vercel.app/
+  **Backend API:** https://aerosage-api.onrender.com
+  **GitHub Repository:** https://github.com/sreshtha1804-code/AeroSage-AI
+</p>
 
 ---
 
-## 🌐 Live Project Links
+## 🌍 Project Overview
 
-| Resource | Link |
-|---|---|
-| 🌿 Live Application | [AeroSage AI](https://aerosageai-six.vercel.app/) |
-| 💻 GitHub Repository | [AeroSage-AI](https://github.com/sreshtha1804-code/AeroSage-AI) |
-| ⚙️ Backend API | [AeroSage API](https://aerosage-api.onrender.com) |
-| ❤️ API Health Check | [Check API Status](https://aerosage-api.onrender.com/api/health) |
-| 🚀 Frontend Hosting | [Vercel](https://vercel.com/) |
-| ☁️ Backend Hosting | [Render](https://render.com/) |
+Air pollution is a major environmental challenge affecting public health, especially children, elderly individuals, and people with respiratory sensitivities.
+
+People often see AQI numbers but do not know what those numbers mean for their daily activities.
+
+AeroSage AI addresses this problem by combining environmental data with Generative AI to provide understandable, actionable, and context-aware environmental guidance.
+
+### 🎯 Our Mission
+
+To make environmental intelligence accessible to everyone and empower communities to make informed decisions about the air they breathe.
 
 ---
 
 ## ✨ Key Features
 
-### 1. 🌍 Real-Time Air Quality Intelligence
-- Search air quality information by city.
-- View estimated AQI and major pollutant readings.
-- Track PM2.5, PM10, and other available pollutants.
-- Explore historical trends and short-term forecasts.
-- Understand air quality through health-oriented categories.
+### 1. 🌫️ Real-Time Air Quality Dashboard
+- Monitor air quality information for selected locations.
+- View estimated AQI and pollutant information.
+- Understand air quality categories through an intuitive dashboard.
+- Access environmental conditions in an easy-to-understand format.
 
-### 2. 📅 Smart Daily Planner
-- Identify comparatively cleaner hours for outdoor activities.
-- Get recommendations for walks, school, work, and other daily routines.
-- Make more informed decisions based on air quality forecasts.
+### 2. 📊 Pollution Trends & Forecasts
+- Explore historical air quality trends.
+- View upcoming air quality forecasts.
+- Understand changes in pollution levels.
+- Identify periods that may require additional precautions.
 
-### 3. 🏠 Indoor Air Quality Assistant
-- Understand indoor ventilation needs.
+### 3. 🧠 AI-Powered Environmental Assistant
+Powered by **Google Gemini 3.8 Flash**.
+
+Users can ask natural-language questions such as:
+- Is it safe for my children to play outside today?
+- How can I improve my bedroom's air quality cheaply?
+- What precautions should I take during poor air quality?
+- What does the current AQI mean for my family?
+
+The assistant uses available environmental context to generate understandable responses and practical recommendations.
+
+### 4. 🕒 Smart Daily Activity Planner
+- Identify comparatively cleaner outdoor hours.
+- Support better planning of outdoor activities.
+- Provide recommendations based on available air quality information.
+
+### 5. 🏠 Indoor Air Quality Guidance
+- Discover affordable ways to improve indoor air quality.
+- Learn practical pollution-reduction habits.
 - Explore air purifier sizing guidance.
-- Receive practical, low-cost indoor air quality improvement tips.
-- Learn when ventilation may be beneficial based on outdoor conditions.
+- Understand common indoor pollution sources.
 
-### 4. 🤖 AI-Powered Environmental Assistant
-- Ask questions about pollution and environmental health.
-- Receive contextual air quality guidance.
-- Get practical suggestions based on available environmental information.
-- Uses Google's Gemini API when configured, with a rule-based fallback.
-
-### 5. 👨‍👩‍👧 Family Safety
-- Create and manage family profiles.
-- Organize profiles by user category.
+### 6. 👨‍👩‍👧 Family Health Support
+- Manage family profiles.
 - Access family-oriented environmental guidance.
-- Generate printable family reports.
+- Generate printable environmental health reports.
 
-*Family profile persistence requires Supabase configuration.*
+*Cloud-based family profile storage requires optional Supabase configuration.*
 
-### 6. 🌱 Environmental Impact Calculator
-- Explore estimated environmental impact.
-- Understand how everyday choices relate to sustainability.
-- Use editable assumptions to calculate indicative results.
+### 7. 🌱 Environmental Impact Calculator
+Explore how everyday choices and sustainable habits can contribute to a healthier environment.
+
+---
+
+## 🤖 Generative AI Integration
+
+### Google Gemini API — Gemini 3.8 Flash
+
+Gemini is the primary Generative AI service used in AeroSage AI.
+
+It powers the conversational environmental assistant and helps users:
+
+- Understand air quality information.
+- Ask questions in natural language.
+- Receive context-aware environmental guidance.
+- Explore practical indoor and outdoor pollution precautions.
+- Make more informed everyday decisions.
+
+The backend sends user questions and available environmental context to the Gemini API and returns generated responses to the frontend.
+
+**Configured model:**
+`gemini-3.8-flash`
+
+### Environmental Data Integration
+
+**Open-Meteo API**
+
+Open-Meteo provides environmental and air quality information used by the application, including air quality measurements and forecast data.
+
+The application combines this environmental information with Gemini-generated insights.
+
+**Important:** Environmental readings and AQI calculations are estimates based on available data and calculation methods. They should not be interpreted as official ground-monitoring station measurements.
 
 ---
 
@@ -65,47 +110,48 @@ Instead of simply displaying AQI values, AeroSage AI transforms environmental da
 
 | Category | Technologies |
 |---|---|
-| Frontend | React.js, JavaScript |
-| Build Tool | Vite |
-| Styling | CSS, Tailwind CSS |
-| Icons | Lucide React |
-| Charts | Recharts |
+| Frontend | React, JavaScript, Vite |
+| Styling | Tailwind CSS, CSS |
 | Backend | Node.js, Express.js |
-| AI Integration | Google Gemini API |
-| Environmental Data | Open-Meteo Geocoding & Air Quality APIs |
-| Database / Persistence | Supabase (optional) |
-| Frontend Deployment | Vercel |
-| Backend Deployment | Render |
-| Version Control | Git & GitHub |
+| Generative AI | Google Gemini API |
+| AI Model | Gemini 3.8 Flash |
+| Environmental Data | Open-Meteo API |
+| Database | Supabase (optional) |
+| Charts | Recharts |
+| Icons | Lucide React |
+| Deployment | Vercel, Render |
+| Version Control | Git, GitHub |
 
 ---
 
-## 🏗️ System Architecture
+## 🏗️ Project Architecture
 
 ```text
-                  USER
-                    |
-                    v
-          REACT FRONTEND (VITE)
-                    |
-                    v
-             EXPRESS BACKEND
-                    |
-        +-----------+-----------+
-        |           |           |
-        v           v           v
-   Open-Meteo    Gemini API   Supabase
-   Air Quality   AI Assistant  Optional
-   & Geocoding
-        |           |           |
-        +-----------+-----------+
-                    |
-                    v
-          PROCESSED RESPONSES
-                    |
-                    v
-             USER INTERFACE
+                 USER
+                   |
+                   v
+          REACT FRONTEND
+             (Vercel)
+                   |
+                   v
+          EXPRESS BACKEND
+             (Render)
+             /       \
+            /         \
+           v           v
+     Open-Meteo    Gemini API
+     Air Quality   Gemini 3.8
+       Data          Flash
+           \           /
+            \         /
+             v       v
+          PROCESSED INSIGHTS
+                   |
+                   v
+          USER-FRIENDLY RESULTS
 ```
+
+Optional Supabase integration supports cloud-based family profile storage.
 
 ---
 
@@ -140,7 +186,7 @@ AeroSage-AI/
 
 ---
 
-## ⚙️ Run Locally
+## ⚙️ Installation & Setup
 
 ### Prerequisites
 
@@ -149,67 +195,61 @@ Make sure you have installed:
 - Node.js 18 or later
 - npm
 - Git
-- A code editor such as Visual Studio Code
+- A Google Gemini API key
 
-### 1. Clone the Repository
+### 1. Clone the repository
 
 ```bash
 git clone https://github.com/sreshtha1804-code/AeroSage-AI.git
 ```
 
-### 2. Navigate to the Project
+### 2. Navigate to the project
 
 ```bash
 cd AeroSage-AI
 ```
 
-### 3. Install Dependencies
+### 3. Install dependencies
 
 ```bash
 npm install
 ```
 
-### 4. Configure Environment Variables
+### 4. Configure environment variables
 
-Create a `.env` file in the project root using `.env.example` as a reference.
+Create a `.env` file in the project root.
 
 ```env
-GEMINI_API_KEY=your_gemini_api_key
-GEMINI_MODEL=gemini-2.5-flash
-
 PORT=8787
+
+GEMINI_API_KEY=your_gemini_api_key
+GEMINI_MODEL=gemini-3.8-flash
 
 CORS_ORIGIN=http://localhost:5173
 
-SUPABASE_URL=
-SUPABASE_SERVICE_KEY=
+SUPABASE_URL=your_supabase_project_url
+SUPABASE_SERVICE_KEY=your_supabase_service_role_key
 ```
 
-Do not commit your `.env` file or expose API keys publicly.
+Supabase variables are optional unless you want cloud-based family profile storage.
 
-### 5. Start the Backend
+**Security:** Never commit your `.env` file, Gemini API key, or Supabase service-role key to GitHub.
 
-Open a terminal:
+### 5. Start the development server
+
+Start the backend:
 
 ```bash
 npm run server
 ```
 
-The backend will run at:
-
-```text
-http://localhost:8787
-```
-
-### 6. Start the Frontend
-
-Open another terminal:
+In another terminal, start the frontend:
 
 ```bash
 npm run dev
 ```
 
-Open the local application:
+Open the local URL displayed by Vite, usually:
 
 ```text
 http://localhost:5173
@@ -217,152 +257,111 @@ http://localhost:5173
 
 ---
 
-## 🔌 API Documentation
+## 🔌 API Endpoints
 
-The backend provides the following API endpoints.
+The backend exposes the following endpoints:
 
-| Method | Endpoint | Description |
+| Method | Endpoint | Purpose |
 |---|---|---|
-| GET | `/api/health` | Check backend health |
+| GET | `/api/health` | Backend health check |
 | GET | `/api/aqi?city=Kolkata` | Retrieve air quality information |
-| GET | `/api/aqi?city=Kolkata&demo=1` | Retrieve demonstration AQI data |
-| POST | `/api/chat` | Send a message to the AI assistant |
+| POST | `/api/chat` | Generate AI-powered responses |
 | GET | `/api/family` | Retrieve family profiles |
-| POST | `/api/family` | Create a family profile |
-| DELETE | `/api/family/:id?device=DEVICE_ID` | Delete a family profile |
+| POST | `/api/family` | Save a family profile |
+| DELETE | `/api/family/:id` | Delete a family profile |
 
-### Example: Health Check
+Family endpoints require Supabase configuration.
 
-```http
-GET /api/health
+### Health Check
+
+```text
+https://aerosage-api.onrender.com/api/health
 ```
-
-Expected response:
-
-```json
-{
-  "status": "ok"
-}
-```
-
-### Example: Chat Request
-
-```http
-POST /api/chat
-Content-Type: application/json
-```
-
-Request body:
-
-```json
-{
-  "message": "How can I protect myself from air pollution?",
-  "history": [],
-  "context": {},
-  "profile": []
-}
-```
-
-The response contains the assistant's text and an indicator of whether the Gemini AI service was used.
 
 ---
 
-## ☁️ Deployment
+## 🚀 Deployment
 
-AeroSage AI uses separate hosting for the frontend and backend.
+AeroSage AI uses separate deployment services for its frontend and backend.
 
 ### Frontend — Vercel
 
-1. Import the GitHub repository into Vercel.
-2. Select Vite as the framework.
-3. Set the build command to `npm run build`.
-4. Set the output directory to `dist`.
-5. Add the following environment variable:
+The React frontend is deployed using Vercel.
 
-```env
-VITE_API_URL=https://aerosage-api.onrender.com
-```
+Live URL:
 
-6. Deploy the project.
+https://aerosageai-six.vercel.app/
 
 ### Backend — Render
 
-The repository includes a `render.yaml` Blueprint configuration.
+The Node.js and Express backend is deployed using Render.
 
-Important settings:
+Backend URL:
 
-| Setting | Value |
-|---|---|
-| Runtime | Node |
-| Build Command | `npm install` |
-| Start Command | `npm start` |
-| Health Check | `/api/health` |
-| Node Version | 20 |
+https://aerosage-api.onrender.com
 
-Configure the following environment variables in Render:
+Configure the required environment variables in Render before deployment.
 
-```env
-GEMINI_API_KEY=your_gemini_api_key
-GEMINI_MODEL=gemini-2.5-flash
-CORS_ORIGIN=https://aerosageai-six.vercel.app
-SUPABASE_URL=your_supabase_url
-SUPABASE_SERVICE_KEY=your_supabase_service_key
-```
-
-Supabase variables are optional if family profile persistence is not required.
+Set the frontend's backend API URL using the deployment configuration supported by the project.
 
 ---
 
-## 🌐 Data Sources & Transparency
+## 🔐 Security Considerations
 
-AeroSage AI uses environmental data from Open-Meteo's Geocoding and Air Quality APIs.
-
-**Important data considerations:**
-
-- Air quality information is based on atmospheric model data, not direct measurements from a local ground sensor.
-- AQI values are estimated using PM2.5 and PM10 concentrations with CPCB-style breakpoints.
-- The displayed AQI should be treated as an indicative estimate, not an official government monitoring-station reading.
-- Forecasts and recommendations are informational and should not replace official health advisories or professional medical advice.
+- API keys are stored as server-side environment variables.
+- Gemini requests are handled by the backend.
+- Supabase service credentials should never be exposed in frontend code.
+- Backend input validation helps prevent invalid requests.
+- CORS configuration restricts permitted frontend origins.
+- Error handling provides fallback responses when AI services are unavailable.
 
 ---
 
-## 🔮 Future Enhancements
+## 🌱 Future Enhancements
 
-- Interactive pollution maps.
-- More advanced predictive pollution analytics.
-- Personalized environmental risk notifications.
-- Expanded health-oriented recommendations.
-- Integration with additional environmental data sources.
-- Improved family monitoring and reporting.
-
----
-
-## 👥 Team
-
-**Team Twinergy**
-
-Built with the vision of making environmental intelligence more accessible, understandable, and actionable.
+- Hyperlocal air quality monitoring.
+- More granular pollution-risk predictions.
+- Personalized family health recommendations.
+- Integration with IoT air quality sensors.
+- Indoor air quality monitoring.
+- Interactive pollution-risk maps.
+- More environmental data sources.
+- Improved automated testing and monitoring.
 
 ---
 
-## ❤️ Contributing
+## 💡 Problem Statement Alignment
 
-Contributions, suggestions, and feedback are welcome.
+**Challenge 6 — Urban Air Quality Assistant**
 
-1. Fork the repository.
-2. Create a feature branch.
-3. Make your changes.
-4. Submit a pull request.
+AeroSage AI addresses the challenge of making urban air quality information understandable, accessible, and actionable.
 
----
+By combining environmental data, AI-generated insights, and practical recommendations, the platform helps individuals and families understand pollution risks and make better-informed everyday decisions.
 
-## 📄 License
-
-No open-source license has been specified yet. All rights are reserved by the project owner unless a license is added to this repository.
+It aims to move beyond traditional AQI dashboards towards an intelligent, user-focused environmental assistance platform.
 
 ---
 
-### 🌿 AeroSage AI
-**Predict Pollution. Protect People. Breathe Smarter.**
+## 👩‍💻 Developed By
 
-*Making every breath a little smarter.*
+**Sreshtha Das**
+
+B.Tech — Computer Science and Engineering
+
+GitHub: https://github.com/sreshtha1804-code
+
+---
+
+## 📜 Disclaimer
+
+AeroSage AI is an informational environmental assistance platform. Its readings, estimates, forecasts, and AI-generated recommendations are not a substitute for official air quality advisories or professional medical advice.
+
+Users should consult official environmental monitoring authorities for authoritative air quality information.
+
+---
+
+<p align="center">
+  **AeroSage AI 🌿**
+  <br/>
+  *Predict Pollution. Protect People. Breathe Smarter.*
+</p>
