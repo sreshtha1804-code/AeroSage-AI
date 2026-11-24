@@ -8,24 +8,48 @@
     "server": "node server/index.js",
     "build": "vite build",
     "start": "node server/index.js",
-    "format": "prettier --write ."
+    "test": "vitest run",
+    "test:server": "vitest run tests/server",
+    "test:client": "vitest run tests/client",
+    "test:watch": "vitest",
+    "test:coverage": "vitest run --coverage",
+    "lint": "eslint .",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "check": "npm run lint && npm test && npm run build"
   },
   "dependencies": {
     "cors": "^2.8.5",
     "dotenv": "^16.4.5",
     "express": "^4.19.2",
+    "express-rate-limit": "^8.7.5",
+    "helmet": "^8.3.0",
     "lucide-react": "^0.383.0",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "recharts": "^2.12.7"
   },
   "devDependencies": {
-    "@vitejs/plugin-react": "^4.3.1",
+    "@eslint/js": "^9.39.5",
+    "@testing-library/dom": "^10.4.2",
+    "@testing-library/jest-dom": "^6.9.1",
+    "@testing-library/react": "^16.3.3",
+    "@testing-library/user-event": "^14.6.13",
+    "@vitejs/plugin-react": "^4.7.0",
+    "@vitest/coverage-v8": "^5.1.1",
     "autoprefixer": "^10.4.19",
+    "axe-core": "^4.14.1",
+    "eslint": "^9.39.5",
+    "eslint-plugin-jsx-a11y": "^6.10.2",
+    "eslint-plugin-react": "^7.37.5",
+    "eslint-plugin-react-hooks": "^5.2.0",
+    "globals": "^17.14.0",
+    "jsdom": "^25.0.1",
     "postcss": "^8.4.38",
+    "prettier": "^3.3.2",
     "tailwindcss": "^3.4.4",
-    "vite": "^5.3.1",
-    "prettier": "^3.3.2"
+    "vite": "^6.4.6",
+    "vitest": "^5.1.1"
   },
   "engines": {
     "node": ">=18"
