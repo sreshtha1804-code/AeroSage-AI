@@ -4,7 +4,7 @@ import {
   createFamilyMember,
   deleteFamilyMember,
   errorMessage,
-  fetchAqi,
+  fetchAirQuality,
   getFamily,
   sendChat,
 } from '../../src/lib/api.js';
@@ -13,14 +13,15 @@ import { json } from './fixtures.js';
 
 afterEach(() => {
   vi.unstubAllGlobals();
+  vi.restoreAllMocks();
   localStorage.clear();
 });
 
 describe('api client', () => {
-  it('encodes the city and adds demo flag', async () => {
+  it('encodes the city and adds the demo flag', async () => {
     const f = vi.fn(async () => json({ ok: 1 }));
     vi.stubGlobal('fetch', f);
-    await fetchAqi('New Delhi & co', { demo: true });
+    await fetchAirQuality('New Delhi & co', { demo: true });
     expect(f.mock.calls[0][0]).toBe('/api/aqi?city=New%20Delhi%20%26%20co&demo=1');
   });
 
@@ -29,7 +30,7 @@ describe('api client', () => {
       'fetch',
       vi.fn(async () => json({ error: 'Nope', canDemo: true }, 502)),
     );
-    const err = await fetchAqi('x').catch((e) => e);
+    const err = await fetchAirQuality('x').catch((e) => e);
     expect(err).toBeInstanceOf(ApiError);
     expect(err.status).toBe(502);
     expect(err.body.canDemo).toBe(true);
@@ -61,8 +62,47 @@ describe('api client', () => {
         },
       })),
     );
-    const err = await fetchAqi('x').catch((e) => e);
-    expect(err.message).toBe('Request failed');
+    expect((await fetchAirQuality('x').catch((e) => e)).message).toBe('Request failed');
+  });
+
+  it('cancels the request when the caller aborts, using the fallback when AbortSignal.any is unavailable', async () => {
+    const original = AbortSignal.any;
+    AbortSignal.any = undefined;
+    try {
+      let seen;
+      vi.stubGlobal(
+        'fetch',
+        vi.fn(async (_url, init) => {
+          seen = init.signal;
+          return json({});
+        }),
+      );
+      const controller = new AbortController();
+      await fetchAirQuality('x', { signal: controller.signal });
+      expect(seen.aborted).toBe(false);
+      controller.abort();
+      expect(seen.aborted).toBe(true);
+      const already = new AbortController();
+      already.abort();
+      await fetchAirQuality('x', { signal: already.signal });
+      expect(seen.aborted).toBe(true);
+    } finally {
+      AbortSignal.any = original;
+    }
+  });
+
+  it('still works when AbortSignal.timeout is unavailable (older browsers)', async () => {
+    const original = AbortSignal.timeout;
+    AbortSignal.timeout = undefined;
+    try {
+      vi.stubGlobal(
+        'fetch',
+        vi.fn(async () => json({ ok: true })),
+      );
+      expect(await fetchAirQuality('x')).toEqual({ ok: true });
+    } finally {
+      AbortSignal.timeout = original;
+    }
   });
 
   it('maps network errors and timeouts to friendly messages', () => {
@@ -98,6 +138,9 @@ describe('storage', () => {
     expect(getDeviceId()).toBeTruthy();
     expect(loadFamily()).toEqual([]);
     expect(() => saveFamily([])).not.toThrow();
-    vi.restoreAllMocks();
+  });
+  it('uid falls back when crypto.randomUUID is missing', () => {
+    vi.stubGlobal('crypto', {});
+    expect(uid()).toMatch(/-/);
   });
 });

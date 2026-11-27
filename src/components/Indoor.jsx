@@ -17,20 +17,23 @@ const TIPS = [
   ],
 ];
 
-export default function Indoor({ d }) {
+/** Indoor air page. Works without live data, but uses it for ventilation advice when available. */
+export default function Indoor({ airQuality }) {
   const [area, setArea] = useState(12);
-  const aqi = d?.current.aqi;
+  const aqi = airQuality?.current.aqi;
   const { cfm, m3h } = purifierCadr(area);
 
   let ventilation;
-  if (!d) ventilation = 'Load air quality (Air Quality tab) for a live recommendation.';
-  else if (aqi == null)
+  if (!airQuality) {
+    ventilation = 'Load air quality (Air Quality tab) for a live recommendation.';
+  } else if (aqi == null) {
     ventilation =
       'AQI is unavailable right now. Ventilate briefly only when you can smell no smoke or dust outside.';
-  else if (aqi > 200)
+  } else if (aqi > 200) {
     ventilation = `AQI ${aqi}: keep windows closed in peak hours; ventilate 5–10 min only in the cleanest forecast hour (see Planner). Seal gaps with draught strips (low cost).`;
-  else
+  } else {
     ventilation = `AQI ${aqi}: brief cross-ventilation is reasonable, especially while cooking or cleaning.`;
+  }
 
   return (
     <div className="grid gap-3 md:grid-cols-2">

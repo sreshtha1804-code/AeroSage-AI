@@ -20,6 +20,10 @@ export default defineConfig({
       },
       {
         extends: true,
+        test: { name: 'repo', environment: 'node', include: ['tests/repo/**/*.test.js'] },
+      },
+      {
+        extends: true,
         test: {
           name: 'client',
           environment: 'jsdom',

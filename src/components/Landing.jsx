@@ -1,4 +1,5 @@
 import { Bot, CalendarClock, Home, Sprout, Users, Wind } from 'lucide-react';
+import CitySearchForm from './CitySearchForm.jsx';
 import { PageTitle } from './common.jsx';
 import Skyline from './Skyline.jsx';
 
@@ -26,31 +27,19 @@ export default function Landing({ city, setCity, start }) {
       </PageTitle>
       <p className="mt-2 text-xl text-leaf">Smarter Air. Healthier Living.</p>
       <p className="mx-auto mt-4 max-w-xl text-slate-300">
-        Your personal environmental advisor for severe winter smog: live air quality, a
+        Your Smart Environmental Health Assistant for severe winter smog: live air quality, a
         Gemini-powered assistant, smart daily routines, indoor air tips and transparent
         sustainability maths.
       </p>
-      <form
-        onSubmit={(e) => {
-          e.preventDefault();
-          start();
-        }}
+      <CitySearchForm
+        id="home-city"
+        city={city}
+        onCityChange={setCity}
+        onSubmit={start}
+        submitLabel="Check air"
+        visibleLabel={false}
         className="mx-auto mt-6 flex max-w-md gap-2"
-      >
-        <label htmlFor="home-city" className="sr-only">
-          City
-        </label>
-        <input
-          id="home-city"
-          className="inp"
-          autoComplete="address-level2"
-          maxLength={80}
-          value={city}
-          onChange={(e) => setCity(e.target.value)}
-          placeholder="Enter your city"
-        />
-        <button className="btn">Check air</button>
-      </form>
+      />
       <h2 className="mt-10 sr-only">Why AeroSage AI</h2>
       <div className="mt-10 grid gap-3 text-left sm:grid-cols-3">
         {PILLARS.map(([t, s]) => (

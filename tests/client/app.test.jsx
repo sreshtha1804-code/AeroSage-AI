@@ -3,7 +3,6 @@ import { render, screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import axe from 'axe-core';
 import App from '../../src/App.jsx';
-import { toHistory } from '../../src/components/Chat.jsx';
 import { json, makeAqi, mockFetch } from './fixtures.js';
 
 // Recharts needs real layout; the chart modules are replaced by lightweight stand-ins.
@@ -323,22 +322,6 @@ describe('AI assistant', () => {
     await u.click(screen.getByRole('button', { name: 'Air Quality' }));
     await u.click(screen.getByRole('button', { name: 'AI Assistant' }));
     expect(await screen.findByText('Remember me.')).toBeInTheDocument();
-  });
-
-  it('only sends genuine Gemini replies back as history', () => {
-    expect(
-      toHistory([
-        { role: 'user', text: 'q1' },
-        { role: 'ai', text: 'fallback', source: 'fallback' },
-        { role: 'user', text: 'q2' },
-        { role: 'ai', text: 'real', source: 'gemini' },
-        { role: 'ai', text: 'err', source: 'error' },
-      ]),
-    ).toEqual([
-      { role: 'user', text: 'q1' },
-      { role: 'user', text: 'q2' },
-      { role: 'model', text: 'real' },
-    ]);
   });
 });
 

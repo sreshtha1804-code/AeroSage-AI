@@ -23,6 +23,9 @@ describe('ErrorBoundary', () => {
 
   it('shows an accessible alert with a reload button instead of a blank page', async () => {
     vi.spyOn(console, 'error').mockImplementation(() => {});
+    // jsdom reports the (intentional) render error as an uncaught window error; swallow it for this test only.
+    const swallow = (event) => event.preventDefault();
+    window.addEventListener('error', swallow);
     const reload = vi.fn();
     vi.stubGlobal('location', { ...window.location, reload });
     render(
@@ -33,6 +36,7 @@ describe('ErrorBoundary', () => {
     expect(screen.getByRole('alert')).toHaveTextContent(/something went wrong/i);
     await userEvent.setup().click(screen.getByRole('button', { name: 'Reload' }));
     expect(reload).toHaveBeenCalled();
+    window.removeEventListener('error', swallow);
     vi.unstubAllGlobals();
   });
 });

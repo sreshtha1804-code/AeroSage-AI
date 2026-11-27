@@ -9,11 +9,15 @@ export default class ErrorBoundary extends Component {
   }
 
   componentDidCatch(error) {
+    // The one deliberate console call in the frontend: it reports an unexpected render failure.
+    // eslint-disable-next-line no-console
     console.error('[UI error]', error);
   }
 
   render() {
-    if (!this.state.failed) return this.props.children;
+    if (!this.state.failed) {
+      return this.props.children;
+    }
     return (
       <div
         role="alert"

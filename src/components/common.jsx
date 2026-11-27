@@ -4,18 +4,21 @@ import { shouldFocusHeading } from '../lib/focus.js';
 
 /** Page `h1`. Receives focus after in-app navigation so screen-reader users hear the new page. */
 export function PageTitle({ children, className = 'text-2xl font-bold' }) {
-  const ref = useRef(null);
+  const heading = useRef(null);
   useEffect(() => {
-    if (shouldFocusHeading()) ref.current?.focus();
+    if (shouldFocusHeading()) {
+      heading.current?.focus();
+    }
   }, []);
   return (
-    <h1 ref={ref} tabIndex={-1} className={`${className} focus:outline-none`}>
+    <h1 ref={heading} tabIndex={-1} className={`${className} focus:outline-none`}>
       {children}
     </h1>
   );
 }
 
-export const Badge = ({ demo }) =>
+/** Says whether data is live model data or synthetic demo data. */
+export const DataBadge = ({ demo }) =>
   demo ? (
     <span className="rounded bg-amber-400 px-2 py-0.5 text-xs font-bold text-black">
       DEMO MODE – synthetic data
@@ -50,7 +53,18 @@ export const NumberField = ({ label, value, onChange, step = 1, min = 0 }) => (
       min={min}
       className="inp mt-1"
       value={value}
-      onChange={(e) => onChange(Number(e.target.value) || 0)}
+      onChange={(event) => onChange(Number(event.target.value) || 0)}
     />
   </label>
+);
+
+/** Shown on every data page when the displayed reading may be out of date. */
+export const StaleNotice = ({ fetchedAtText, reason }) => (
+  <p
+    role="status"
+    className="rounded-xl border border-amber-400/50 bg-amber-400/15 p-3 text-sm text-amber-100"
+  >
+    <b>Stale data.</b> {reason} Showing the last valid reading, retrieved {fetchedAtText}. Values
+    may have changed.
+  </p>
 );

@@ -1,28 +1,42 @@
 import { Suspense, lazy } from 'react';
-import { ADV, bestHours, fmtHour, tier } from '../lib/aqi.js';
-import { Badge, PageTitle, Spinner, UnknownAqiNote } from './common.jsx';
+import { ADVICE, adviceTier, findBestHours, formatHour } from '../lib/aqi.js';
+import { DataBadge, PageTitle, Spinner, UnknownAqiNote } from './common.jsx';
 
-const HourlyChart = lazy(() => import('./AqiCharts.jsx').then((m) => ({ default: m.HourlyChart })));
+const HourlyChart = lazy(() =>
+  import('./AqiCharts.jsx').then((module) => ({ default: module.HourlyChart })),
+);
 
-export default function Plan({ d }) {
-  const { next, best } = bestHours(d.series, d.nowIndex);
-  const T = tier(d.current.aqi);
-  const summary = best.length
-    ? `Hourly AQI for the next 24 hours. Cleanest daytime hours: ${best.map(fmtHour).join(', ')}.`
-    : 'Hourly AQI for the next 24 hours. No AQI values are available.';
+const AUDIENCES = [
+  ['Everyone', 'general'],
+  ['Children', 'child'],
+  ['Elderly', 'elderly'],
+  ['Outdoor workers', 'worker'],
+];
+
+const KIND_LABEL = { now: 'Now (model estimate)', forecast: 'Forecast' };
+
+const describeHourly = (best) =>
+  best.length
+    ? `Forecast AQI for the next 24 hours. Cleanest daytime hours: ${best.map(formatHour).join(', ')}.`
+    : 'Forecast AQI for the next 24 hours. No AQI values are available.';
+
+/** Daily planner: the cleanest forecast hours and tailored guidance by audience. */
+export default function Plan({ airQuality }) {
+  const { next, best } = findBestHours(airQuality.series, airQuality.nowIndex);
+  const tier = adviceTier(airQuality.current.aqi);
 
   return (
     <div className="space-y-4">
       <PageTitle>Daily planner</PageTitle>
-      {d.current.aqi == null && <UnknownAqiNote />}
+      {airQuality.current.aqi == null && <UnknownAqiNote />}
       <section className="card">
-        <h2 className="font-semibold">Best outdoor windows (next 24h)</h2>
+        <h2 className="font-semibold">Best outdoor windows (next 24h, forecast)</h2>
         <p className="text-sm text-slate-300">
-          Lowest forecast hours between 5am–9pm:{' '}
-          <b className="text-leaf">{best.map(fmtHour).join(', ') || 'n/a'}</b>.{' '}
-          <Badge demo={d.demo} />
+          Lowest forecast hours between 5am–9pm, city local time:{' '}
+          <b className="text-leaf">{best.map(formatHour).join(', ') || 'n/a'}</b>.{' '}
+          <DataBadge demo={airQuality.demo} />
         </p>
-        <div role="img" aria-label={summary} className="mt-2 h-44">
+        <div role="img" aria-label={describeHourly(best)} className="mt-2 h-44">
           <Suspense fallback={<Spinner label="Loading chart…" />}>
             <HourlyChart data={next} best={best} />
           </Suspense>
@@ -38,17 +52,19 @@ export default function Plan({ d }) {
                 <tr>
                   <th scope="col">Hour</th>
                   <th scope="col">AQI</th>
+                  <th scope="col">Type</th>
                   <th scope="col">Note</th>
                 </tr>
               </thead>
               <tbody>
-                {next.map((s) => (
-                  <tr key={s.t}>
+                {next.map((point) => (
+                  <tr key={point.t}>
                     <th scope="row" className="font-normal">
-                      {fmtHour(s.h)}
+                      {formatHour(point.hour)}
                     </th>
-                    <td>{s.aqi ?? 'n/a'}</td>
-                    <td>{best.includes(s.h) ? 'Among the cleanest hours' : ''}</td>
+                    <td>{point.aqi ?? 'n/a'}</td>
+                    <td>{KIND_LABEL[point.kind]}</td>
+                    <td>{best.includes(point.hour) ? 'Among the cleanest hours' : ''}</td>
                   </tr>
                 ))}
               </tbody>
@@ -57,15 +73,10 @@ export default function Plan({ d }) {
         </details>
       </section>
       <div className="grid gap-3 md:grid-cols-2">
-        {[
-          ['Everyone', ADV.general],
-          ['Children', ADV.child],
-          ['Elderly', ADV.elderly],
-          ['Outdoor workers', ADV.worker],
-        ].map(([n, a]) => (
-          <section key={n} className="card">
-            <h2 className="font-semibold text-teal-300">{n}</h2>
-            <p className="text-sm">{a[T]}</p>
+        {AUDIENCES.map(([title, key]) => (
+          <section key={key} className="card">
+            <h2 className="font-semibold text-teal-300">{title}</h2>
+            <p className="text-sm">{ADVICE[key][tier]}</p>
           </section>
         ))}
       </div>
@@ -79,7 +90,7 @@ export default function Plan({ d }) {
             Walk or cycle short trips in the green hours above; avoid busy roads at peak traffic.
           </li>
           <li>
-            {T === 2
+            {tier === 2
               ? 'Exercise indoors: bodyweight circuit, yoga, skipping rope — no equipment cost.'
               : 'Outdoor exercise is reasonable in the green hours; stop if you feel throat/chest irritation.'}
           </li>
